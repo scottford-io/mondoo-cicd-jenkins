@@ -30,7 +30,7 @@ pipeline {
         sh "env | sort"
         sh "echo ${MONDOO_CLIENT_ACCOUNT} | base64 -d > mondoo.json"
         sh 'curl -sSL https://mondoo.io/download.sh | sh'
-        sh "./mondoo scan dockeer $registry:$BUILD_NUMBER --config mondoo.json"
+        sh "./mondoo scan docker $registry:$BUILD_NUMBER --config mondoo.json"
       }
     }
     stage('Remove Unused Docker image') {
