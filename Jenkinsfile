@@ -21,6 +21,7 @@ pipeline {
           }
         }
       }
+    }
     stage('Scan Docker Image with Mondoo') {
       environment {
         MONDOO_CLIENT_ACCOUNT = credentials('MONDOO_CLIENT_ACCOUNT')
