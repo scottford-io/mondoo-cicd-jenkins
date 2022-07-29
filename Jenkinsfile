@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    registry = "thesecureautomator/python-flask-app-demo"
+    registry = "thesecureautomator/mondoo-scanned-python-flask-app"
     registryCredential = 'docker_hub'
     dockerImage = ''
   }
@@ -20,6 +20,16 @@ pipeline {
             dockerImage.push()
           }
         }
+      }
+    stage('Scan Docker Image with Mondoo') {
+      environment {
+        MONDOO_CLIENT_ACCOUNT = credentials('MONDOO_CLIENT_ACCOUNT')
+      }
+      steps{
+        sh "env | sort"
+        sh "echo ${MONDOO_CLIENT_ACCOUNT} | base64 -d > mondoo.json"
+        sh 'curl -sSL https://mondoo.io/download.sh | sh'
+        sh "./mondoo scan dockeer $registry:$BUILD_NUMBER --config mondoo.json"
       }
     }
     stage('Remove Unused Docker image') {
