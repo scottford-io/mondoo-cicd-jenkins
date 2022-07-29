@@ -13,15 +13,6 @@ pipeline {
         }
       }
     }
-    stage('Push Docker Image') {
-      steps{
-         script {
-            docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
-          }
-        }
-      }
-    }
     stage('Scan Docker Image with Mondoo') {
       environment {
         MONDOO_CLIENT_ACCOUNT = credentials('MONDOO_CLIENT_ACCOUNT')
@@ -31,6 +22,15 @@ pipeline {
         sh "echo ${MONDOO_CLIENT_ACCOUNT} | base64 -d > mondoo.json"
         sh 'curl -sSL https://mondoo.io/download.sh | sh'
         sh "./mondoo scan docker $registry:$BUILD_NUMBER --config mondoo.json"
+      }
+    }
+    stage('Push Docker Image') {
+      steps{
+         script {
+            docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+        }
       }
     }
     stage('Remove Unused Docker image') {
